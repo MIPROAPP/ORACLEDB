@@ -1,0 +1,20 @@
+-- =============================================================================
+-- ScriptOracleDBTBMiPRO.sql — particion por tabla (modulo MI, SKMI v1.1)
+-- Ejecutar los archivos en este orden por dependencias de FK:
+-- =============================================================================
+--  1. armius.sql          (USUARIO — sin dependencias)
+--  2. armitti.sql         (catalogo tipo telefono — sin dependencias)
+--  3. armiust.sql         (telefono -> armius, armitti)
+--  4. armidi.sql          (direccion -> armius)
+--  5. armisot.sql         (catalogo tipo solicitud)
+--  6. armisoe.sql         (catalogo estado solicitud)
+--  7. armiso.sql          (solicitud -> armius, armidi, armisot, armisoe)
+--  8. armisos.sql         (lineas servicio -> armiso)
+--  9. armicie.sql         (catalogo estado cita)
+-- 10. armitc.sql          (tecnico; cz_in.arinmp debe existir para FK no_prove)
+-- 11. armici.sql          (cita -> armiso, armisos, armicie, armitc)
+-- 12. armino.sql          (notificacion -> armiso)
+-- =============================================================================
+-- Pendiente (segun script original):
+--   - Datos iniciales para catalogos: armitti, armisot, armisoe, armicie
+-- =============================================================================

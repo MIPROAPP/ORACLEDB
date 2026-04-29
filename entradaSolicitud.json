@@ -1,0 +1,30 @@
+{
+  "id": "123",
+  "usuario": "usr-88234",
+  "direccion": "dir-55421",
+  "fecha": "2026-04-22T16:45:00Z",
+  "descripcion": "Mantenimiento preventivo de aire acondicionado",
+  "destino": "Residencial Los Olivos, Casa 4B",
+  "empresa": "Servicios Tech S.A.",
+  "factura": "asdasd",
+  "impuesto": 0,
+  "descuento": 0,
+  "subtotal": 85.0,
+  "total": 95.2,
+  "cotizacion": "COT-2026-001",
+  "cotizacion_pagada": true,
+  "cotizacion_forma_pago": "Tarjeta de Crédito",
+  "cotizacion_factura": "dsad",
+  "servicios": [
+    {
+      "servicio": "srv-101",
+      "categoria": "cat-101",
+      "precio": 45.0
+    },
+    {
+      "servicio": "srv-105",
+      "categoria": "cat-102",
+      "precio": 40.0
+    }
+  ]
+}

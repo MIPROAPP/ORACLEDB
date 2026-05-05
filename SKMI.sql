@@ -64,29 +64,6 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
   END FECHA_DESDE_ISO;
 
   ------------------------------------------------------------------------------
-  FUNCTION MAP_NO_ARTI(P_SERVICIO IN VARCHAR2) RETURN VARCHAR2 IS
-    v VARCHAR2(4000);
-  BEGIN
-    IF P_SERVICIO IS NULL THEN
-      RETURN NULL;
-    END IF;
-    v := TRIM(P_SERVICIO);
-    IF LENGTH(v) <= 15 THEN
-      RETURN v;
-    END IF;
-    RETURN SUBSTR(v, 1, 15);
-  END MAP_NO_ARTI;
-
-  ---------------------------------------------------------------------------  
-  FUNCTION VALOR_SERVICIO_LINEA(P_JO IN json_object_t) RETURN VARCHAR2 IS
-  BEGIN
-    IF P_JO.has('servicio') THEN
-      RETURN P_JO.get_string('servicio');
-    END IF;
-    RETURN NULL;
-  END VALOR_SERVICIO_LINEA;
-
-  ------------------------------------------------------------------------------
   PROCEDURE SOLICITUD(P_IN    IN     CLOB,
                       P_OUT      OUT CLOB,
                       P_ERROR IN OUT VARCHAR2) IS
@@ -330,7 +307,7 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
 
     FOR i IN 0 .. n LOOP
       jo := json_object_t(ja.get(i));
-      v_no_arti := MAP_NO_ARTI(VALOR_SERVICIO_LINEA(jo));
+      v_no_arti := TRIM(jo.get_string('servicio'));
       v_precio := jo.get_number('precio');
       v_cant   := 1;
       IF NOT jo.has('categoria') OR

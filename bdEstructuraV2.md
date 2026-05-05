@@ -1,3 +1,8 @@
+---
+config:
+  theme: dark
+---
+
 erDiagram
 
 %%Tecnicos

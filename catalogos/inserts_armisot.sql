@@ -1,11 +1,11 @@
 -- =============================================================================
--- Datos iniciales: CZ_MI.ARMISOT (tipos de solicitud)
+-- Datos iniciales: cz_mi.armisot (tipos de solicitud)
 -- Origen: catalogos/Catalogo_armisot.md
--- Auditoria (FECHA_CREA, USUARIO_CREA, etc.) la completa el trigger ARMISOT_BR.
+-- Auditoria (fecha_crea, usuario_crea, etc.) la completa el trigger armisot_br.
 -- =============================================================================
 
-INSERT INTO CZ_MI.ARMISOT (ID, NOMBRE) VALUES ('A', 'Inspección');
-INSERT INTO CZ_MI.ARMISOT (ID, NOMBRE) VALUES ('B', 'Instalación');
+INSERT INTO cz_mi.armisot (id, nombre) VALUES ('A', 'Inspección');
+INSERT INTO cz_mi.armisot (id, nombre) VALUES ('B', 'Instalación');
 
 COMMIT;
 
@@ -13,7 +13,7 @@ COMMIT;
 -- Rollback de la carga inicial (ejecutar solo si se debe revertir este script)
 -- -----------------------------------------------------------------------------
 /*
-DELETE FROM CZ_MI.ARMISOT
- WHERE ID IN ('A','B');
+DELETE FROM cz_mi.armisot
+ WHERE id IN ('A','B');
 COMMIT;
 */

@@ -1,18 +1,18 @@
 -- =============================================================================
--- Datos iniciales: CZ_MI.ARMISOE (estados de solicitud)
+-- Datos iniciales: cz_mi.armisoe (estados de solicitud)
 -- Origen: catalogos/Catalogo_armisoe.md
--- Auditoria (FECHA_CREA, USUARIO_CREA, etc.) la completa el trigger ARMISOE_BR.
+-- Auditoria (fecha_crea, usuario_crea, etc.) la completa el trigger armisoe_br.
 -- =============================================================================
 
-INSERT INTO CZ_MI.ARMISOE (ID, NOMBRE) VALUES ('A', 'Nuevo');
-INSERT INTO CZ_MI.ARMISOE (ID, NOMBRE) VALUES ('B', 'Levantamiento');
-INSERT INTO CZ_MI.ARMISOE (ID, NOMBRE) VALUES ('C', 'Cotización');
-INSERT INTO CZ_MI.ARMISOE (ID, NOMBRE) VALUES ('D', 'Aprobación y pago');
-INSERT INTO CZ_MI.ARMISOE (ID, NOMBRE) VALUES ('E', 'Programado');
-INSERT INTO CZ_MI.ARMISOE (ID, NOMBRE) VALUES ('F', 'En ejecución');
-INSERT INTO CZ_MI.ARMISOE (ID, NOMBRE) VALUES ('G', 'En pausa');
-INSERT INTO CZ_MI.ARMISOE (ID, NOMBRE) VALUES ('H', 'Finalizado');
-INSERT INTO CZ_MI.ARMISOE (ID, NOMBRE) VALUES ('I', 'Cancelado');
+INSERT INTO cz_mi.armisoe (id, nombre) VALUES ('A', 'Nuevo');
+INSERT INTO cz_mi.armisoe (id, nombre) VALUES ('B', 'Levantamiento');
+INSERT INTO cz_mi.armisoe (id, nombre) VALUES ('C', 'Cotización');
+INSERT INTO cz_mi.armisoe (id, nombre) VALUES ('D', 'Aprobación y pago');
+INSERT INTO cz_mi.armisoe (id, nombre) VALUES ('E', 'Programado');
+INSERT INTO cz_mi.armisoe (id, nombre) VALUES ('F', 'En ejecución');
+INSERT INTO cz_mi.armisoe (id, nombre) VALUES ('G', 'En pausa');
+INSERT INTO cz_mi.armisoe (id, nombre) VALUES ('H', 'Finalizado');
+INSERT INTO cz_mi.armisoe (id, nombre) VALUES ('I', 'Cancelado');
 
 COMMIT;
 
@@ -20,7 +20,7 @@ COMMIT;
 -- Rollback de la carga inicial (ejecutar solo si se debe revertir este script)
 -- -----------------------------------------------------------------------------
 /*
-DELETE FROM CZ_MI.ARMISOE
- WHERE ID IN ('A','B','C','D','E','F','G','H','I');
+DELETE FROM cz_mi.armisoe
+ WHERE id IN ('A','B','C','D','E','F','G','H','I');
 COMMIT;
 */

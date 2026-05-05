@@ -1,19 +1,19 @@
 -- =============================================================================
--- Datos iniciales: CZ_MI.ARMICIE (estados de cita)
+-- Datos iniciales: cz_mi.armicie (estados de cita)
 -- Origen: catalogos/Catalogo_armicie.md
--- Auditoria (FECHA_CREA, USUARIO_CREA, etc.) la completa el trigger ARMICIE_BR.
+-- Auditoria (fecha_crea, usuario_crea, etc.) la completa el trigger armicie_br.
 -- =============================================================================
 
-INSERT INTO CZ_MI.ARMICIE (ID, NOMBRE) VALUES ('A', 'Nuevo');
-INSERT INTO CZ_MI.ARMICIE (ID, NOMBRE) VALUES ('B', 'Coordinado');
-INSERT INTO CZ_MI.ARMICIE (ID, NOMBRE) VALUES ('C', 'Programado');
-INSERT INTO CZ_MI.ARMICIE (ID, NOMBRE) VALUES ('D', 'Reprogramado');
-INSERT INTO CZ_MI.ARMICIE (ID, NOMBRE) VALUES ('E', 'En camino');
-INSERT INTO CZ_MI.ARMICIE (ID, NOMBRE) VALUES ('F', 'En progreso');
-INSERT INTO CZ_MI.ARMICIE (ID, NOMBRE) VALUES ('G', 'En pausa');
-INSERT INTO CZ_MI.ARMICIE (ID, NOMBRE) VALUES ('H', 'En cotización');
-INSERT INTO CZ_MI.ARMICIE (ID, NOMBRE) VALUES ('I', 'Finalizado');
-INSERT INTO CZ_MI.ARMICIE (ID, NOMBRE) VALUES ('J', 'Cancelado');
+INSERT INTO cz_mi.armicie (id, nombre) VALUES ('A', 'Nuevo');
+INSERT INTO cz_mi.armicie (id, nombre) VALUES ('B', 'Coordinado');
+INSERT INTO cz_mi.armicie (id, nombre) VALUES ('C', 'Programado');
+INSERT INTO cz_mi.armicie (id, nombre) VALUES ('D', 'Reprogramado');
+INSERT INTO cz_mi.armicie (id, nombre) VALUES ('E', 'En camino');
+INSERT INTO cz_mi.armicie (id, nombre) VALUES ('F', 'En progreso');
+INSERT INTO cz_mi.armicie (id, nombre) VALUES ('G', 'En pausa');
+INSERT INTO cz_mi.armicie (id, nombre) VALUES ('H', 'En cotización');
+INSERT INTO cz_mi.armicie (id, nombre) VALUES ('I', 'Finalizado');
+INSERT INTO cz_mi.armicie (id, nombre) VALUES ('J', 'Cancelado');
 
 COMMIT;
 
@@ -21,7 +21,7 @@ COMMIT;
 -- Rollback de la carga inicial (ejecutar solo si se debe revertir este script)
 -- -----------------------------------------------------------------------------
 /*
-DELETE FROM CZ_MI.ARMICIE
- WHERE ID IN ('A','B','C','D','E','F','G','H','I','J');
+DELETE FROM cz_mi.armicie
+ WHERE id IN ('A','B','C','D','E','F','G','H','I','J');
 COMMIT;
 */

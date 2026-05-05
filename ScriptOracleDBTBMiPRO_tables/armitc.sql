@@ -3,7 +3,7 @@
 -- Descripcion: Tecnicos disponibles para la ejecucion de servicios en citas.
 -- =============================================================================
 CREATE TABLE cz_mi.armitc (
-  id                      NUMBER          NOT NULL,
+  id                      NUMBER()          NOT NULL,
   no_prove                NUMBER          NOT NULL,
   identificacion          VARCHAR2(30)    NOT NULL,
   tipo_identificacion     VARCHAR2(1)     NOT NULL,

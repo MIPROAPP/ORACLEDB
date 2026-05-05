@@ -4,8 +4,8 @@
 -- =============================================================================
 CREATE TABLE cz_mi.armisos (
   id                      NUMBER          NOT NULL,
-  no_arti                 VARCHAR2(15)    NOT NULL,
-  solicitud               VARCHAR2(36)    NOT NULL,
+  no_arti                 VARCHAR2(15)    NOT NULL, --id de servicio
+  solicitud               VARCHAR2(36)    NOT NULL, --id de solicitud(armiso)
   categoria               VARCHAR2(36)    NOT NULL,
   precio                  NUMBER          NOT NULL,
   cantidad                NUMBER,
@@ -19,7 +19,7 @@ COMMENT ON TABLE cz_mi.armisos IS 'Detalle de servicios solicitados dentro de un
 COMMENT ON COLUMN cz_mi.armisos.id IS 'Identificador numerico de la linea de servicio (asignado en armisos_br con SQMISOS.NEXTVAL).';
 COMMENT ON COLUMN cz_mi.armisos.solicitud IS 'FK a armiso: solicitud padre.';
 COMMENT ON COLUMN cz_mi.armisos.categoria IS 'Codigo o clave de categoria de servicio';
-COMMENT ON COLUMN cz_mi.armisos.no_arti IS 'Numero o codigo de articulo para la linea de solicitud (hasta 15 caracteres).';
+COMMENT ON COLUMN cz_mi.armisos.no_arti IS 'Codigo id del servicio.';
 COMMENT ON COLUMN cz_mi.armisos.precio IS 'Precio del servicio al momento de ser incluido en la solicitud (precio historico).';
 COMMENT ON COLUMN cz_mi.armisos.cantidad IS 'Cantidad de unidades del servicio en la linea de solicitud.';
 COMMENT ON COLUMN cz_mi.armisos.fecha_crea IS 'Fecha y hora de creacion del registro.';

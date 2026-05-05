@@ -2,16 +2,20 @@
 -- TABLA: armici - CITA
 -- Descripcion: Tabla principal de citas programadas para la ejecucion de servicios.
 -- =============================================================================
+CREATE SEQUENCE cz_mi.sqmici
+MINVALUE 1
+MAXVALUE 9999999999
+INCREMENT BY 1
+START WITH 1;
+
 CREATE TABLE cz_mi.armici (
-  id                       NUMBER          NOT NULL,
+  id                       NUMBER(10)      NOT NULL,
   solicitud                VARCHAR2(40)    NOT NULL,
   servicio                 VARCHAR2(36)    NOT NULL,
   estado                   VARCHAR2(1)     NOT NULL,
-  no_prove                 NUMBER          NOT NULL,
-  identificacion           VARCHAR2(30)    NOT NULL,
-  tipo_identificacion      VARCHAR2(1)     NOT NULL,
-  fecha_programada_inicio  DATE            NOT NULL,
-  fecha_programada_fin     DATE            NOT NULL,
+  tecnico                  NUMBER(6)       NOT NULL,
+  inicio                   DATE            NOT NULL,
+  fin                      DATE            NOT NULL,
   fecha_crea               DATE            NOT NULL,
   fecha_modifica           DATE,
   usuario_crea             VARCHAR2(30)    NOT NULL,
@@ -23,11 +27,9 @@ COMMENT ON COLUMN cz_mi.armici.id IS 'Identificador numerico de la cita (asignad
 COMMENT ON COLUMN cz_mi.armici.solicitud IS 'FK a armiso: solicitud asociada.';
 COMMENT ON COLUMN cz_mi.armici.servicio IS 'FK a armisos: linea de servicio concreta a ejecutar en la cita.';
 COMMENT ON COLUMN cz_mi.armici.estado IS 'FK a armicie: estado de la cita.';
-COMMENT ON COLUMN cz_mi.armici.no_prove IS 'FK a armitc (compuesto): numero de proveedor del tecnico asignado.';
-COMMENT ON COLUMN cz_mi.armici.identificacion IS 'FK a armitc (compuesto): identificacion del tecnico.';
-COMMENT ON COLUMN cz_mi.armici.tipo_identificacion IS 'FK a armitc (compuesto): tipo de identificacion del tecnico.';
-COMMENT ON COLUMN cz_mi.armici.fecha_programada_inicio IS 'Fecha y hora de inicio programada para la cita.';
-COMMENT ON COLUMN cz_mi.armici.fecha_programada_fin IS 'Fecha y hora de fin programada para la cita.';
+COMMENT ON COLUMN cz_mi.armici.tecnico IS 'FK a armitc: tecnico asignado.';
+COMMENT ON COLUMN cz_mi.armici.inicio IS 'Fecha y hora de inicio de la cita.';
+COMMENT ON COLUMN cz_mi.armici.fin IS 'Fecha y hora de fin de la cita.';
 COMMENT ON COLUMN cz_mi.armici.fecha_crea IS 'Fecha y hora de creacion del registro.';
 COMMENT ON COLUMN cz_mi.armici.fecha_modifica IS 'Fecha y hora de la ultima modificacion.';
 COMMENT ON COLUMN cz_mi.armici.usuario_crea IS 'Usuario que creo el registro (auditoria).';
@@ -37,26 +39,20 @@ ALTER TABLE cz_mi.armici
   ADD CONSTRAINT armici_pk PRIMARY KEY (id) USING INDEX;
 
 ALTER TABLE cz_mi.armici
-  ADD CONSTRAINT armiso_armici_fk FOREIGN KEY (solicitud)
+  ADD CONSTRAINT armici_armiso FOREIGN KEY (solicitud)
   REFERENCES cz_mi.armiso (id);
 
 ALTER TABLE cz_mi.armici
-  ADD CONSTRAINT armisos_armici_fk FOREIGN KEY (servicio)
+  ADD CONSTRAINT armici_armisos FOREIGN KEY (servicio)
   REFERENCES cz_mi.armisos (id);
 
 ALTER TABLE cz_mi.armici
-  ADD CONSTRAINT armicie_armici_fk FOREIGN KEY (estado)
+  ADD CONSTRAINT armicie_armici FOREIGN KEY (estado)
   REFERENCES cz_mi.armicie (id);
 
 ALTER TABLE cz_mi.armici
-  ADD CONSTRAINT armitc_armici_fk FOREIGN KEY (no_prove, identificacion, tipo_identificacion)
-  REFERENCES cz_mi.armitc (no_prove, identificacion, tipo_identificacion);
-
-CREATE SEQUENCE cz_mi.SQMICI
-MINVALUE 1
-MAXVALUE 999999999999999999999999999
-INCREMENT BY 1
-START WITH 1;
+  ADD CONSTRAINT armitc_armici FOREIGN KEY (tecnico)
+  REFERENCES cz_mi.armitc (id);
 
 CREATE OR REPLACE
 TRIGGER cz_mi.armici_br
@@ -74,7 +70,9 @@ BEGIN
     :NEW.fecha_modifica   := SYSDATE;
   ELSIF UPDATING THEN
     :NEW.usuario_modifica := USER;
+    :NEW.usuario_crea     := :OLD.usuario_crea;
     :NEW.fecha_modifica   := SYSDATE;
+    :NEW.fecha_crea       := :OLD.fecha_crea;
   END IF;
 END;
 /

@@ -38,7 +38,9 @@ BEGIN
     :NEW.fecha_modifica   := SYSDATE;
   ELSIF UPDATING THEN
     :NEW.usuario_modifica := USER;
+    :NEW.usuario_crea     := :OLD.usuario_crea;
     :NEW.fecha_modifica   := SYSDATE;
+    :NEW.fecha_crea       := :OLD.fecha_crea;
   END IF;
 END;
 /

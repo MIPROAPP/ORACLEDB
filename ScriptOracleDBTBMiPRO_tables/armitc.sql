@@ -9,7 +9,7 @@ INCREMENT BY 1
 START WITH 1;
 
 CREATE TABLE cz_mi.armitc (
-  id                      NUMBER          NOT NULL,
+  tecnico                 NUMBER          NOT NULL,
   no_prove                NUMBER          NOT NULL,
   identificacion          VARCHAR2(30)    NOT NULL,
   tipo_identificacion     VARCHAR2(1)     NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE cz_mi.armitc (
 );
 
 COMMENT ON TABLE cz_mi.armitc IS 'Tecnicos registrados en el sistema.';
-COMMENT ON COLUMN cz_mi.armitc.id IS 'Identificador numerico del tecnico (asignado en armitc_br con sqmitc.NEXTVAL). Referencia preferida para FK.';
+COMMENT ON COLUMN cz_mi.armitc.tecnico IS 'Identificador numerico del tecnico (asignado en armitc_br con sqmitc.NEXTVAL). Referencia preferida para FK.';
 COMMENT ON COLUMN cz_mi.armitc.no_prove IS 'Numero de proveedor (FK a cz_in.arinmp; parte de unicidad compuesta).';
 COMMENT ON COLUMN cz_mi.armitc.identificacion IS 'Numero de documento de identidad (parte de unicidad compuesta).';
 COMMENT ON COLUMN cz_mi.armitc.tipo_identificacion IS 'Tipo de documento (parte de unicidad compuesta).';
@@ -34,21 +34,14 @@ COMMENT ON COLUMN cz_mi.armitc.usuario_crea IS 'Usuario que creo el registro (au
 COMMENT ON COLUMN cz_mi.armitc.usuario_modifica IS 'Usuario de la ultima modificacion (auditoria).';
 
 ALTER TABLE cz_mi.armitc
-  ADD CONSTRAINT armitc_pk PRIMARY KEY (id) USING INDEX;
+  ADD CONSTRAINT armitc_pk PRIMARY KEY (no_prove, identificacion, tipo_identificacion) USING INDEX;
 
 ALTER TABLE cz_mi.armitc
-  ADD CONSTRAINT armitc_npi_uq UNIQUE (no_prove, identificacion, tipo_identificacion)
-  USING INDEX;
+  ADD CONSTRAINT armitc_tecnico_uq UNIQUE (tecnico) USING INDEX; -- Oracle me lo pide para poder referenciarlo desde armiso con solo el campo tecnico.
 
 ALTER TABLE cz_mi.armitc
   ADD CONSTRAINT armitc_arinmp_fk FOREIGN KEY (no_prove)
   REFERENCES cz_in.arinmp (no_prove);
-
-CREATE SEQUENCE cz_mi.SQMITC
-MINVALUE 1
-MAXVALUE 999999999999999999999999999
-INCREMENT BY 1
-START WITH 1;
 
 CREATE OR REPLACE
 TRIGGER cz_mi.armitc_br
@@ -59,14 +52,16 @@ REFERENCING NEW AS NEW
 FOR EACH ROW
 BEGIN
   IF INSERTING THEN
-    :NEW.id := cz_mi.sqmitc.NEXTVAL;
+    :NEW.tecnico          := cz_mi.sqmitc.NEXTVAL;
     :NEW.usuario_crea     := USER;
     :NEW.fecha_crea       := SYSDATE;
     :NEW.usuario_modifica := USER;
     :NEW.fecha_modifica   := SYSDATE;
   ELSIF UPDATING THEN
     :NEW.usuario_modifica := USER;
+    :NEW.usuario_crea     := :OLD.usuario_crea;
     :NEW.fecha_modifica   := SYSDATE;
+    :NEW.fecha_crea       := :OLD.fecha_crea;
   END IF;
 END;
 /

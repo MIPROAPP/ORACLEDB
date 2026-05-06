@@ -2,8 +2,14 @@
 -- TABLA: armitc - TECNICO
 -- Descripcion: Tecnicos disponibles para la ejecucion de servicios en citas.
 -- =============================================================================
+CREATE SEQUENCE cz_mi.sqmitc
+MINVALUE 1
+MAXVALUE 999999999999999999999999999
+INCREMENT BY 1
+START WITH 1;
+
 CREATE TABLE cz_mi.armitc (
-  id                      NUMBER()          NOT NULL,
+  id                      NUMBER          NOT NULL,
   no_prove                NUMBER          NOT NULL,
   identificacion          VARCHAR2(30)    NOT NULL,
   tipo_identificacion     VARCHAR2(1)     NOT NULL,
@@ -16,7 +22,7 @@ CREATE TABLE cz_mi.armitc (
 );
 
 COMMENT ON TABLE cz_mi.armitc IS 'Tecnicos registrados en el sistema.';
-COMMENT ON COLUMN cz_mi.armitc.id IS 'Identificador numerico del tecnico (asignado en armitc_br con SQMITC.NEXTVAL). Referencia preferida para FK.';
+COMMENT ON COLUMN cz_mi.armitc.id IS 'Identificador numerico del tecnico (asignado en armitc_br con sqmitc.NEXTVAL). Referencia preferida para FK.';
 COMMENT ON COLUMN cz_mi.armitc.no_prove IS 'Numero de proveedor (FK a cz_in.arinmp; parte de unicidad compuesta).';
 COMMENT ON COLUMN cz_mi.armitc.identificacion IS 'Numero de documento de identidad (parte de unicidad compuesta).';
 COMMENT ON COLUMN cz_mi.armitc.tipo_identificacion IS 'Tipo de documento (parte de unicidad compuesta).';
@@ -35,7 +41,7 @@ ALTER TABLE cz_mi.armitc
   USING INDEX;
 
 ALTER TABLE cz_mi.armitc
-  ADD CONSTRAINT arinmp_armitc_fk FOREIGN KEY (no_prove)
+  ADD CONSTRAINT armitc_arinmp_fk FOREIGN KEY (no_prove)
   REFERENCES cz_in.arinmp (no_prove);
 
 CREATE SEQUENCE cz_mi.SQMITC
@@ -53,7 +59,7 @@ REFERENCING NEW AS NEW
 FOR EACH ROW
 BEGIN
   IF INSERTING THEN
-    :NEW.id := cz_mi.SQMITC.NEXTVAL;
+    :NEW.id := cz_mi.sqmitc.NEXTVAL;
     :NEW.usuario_crea     := USER;
     :NEW.fecha_crea       := SYSDATE;
     :NEW.usuario_modifica := USER;

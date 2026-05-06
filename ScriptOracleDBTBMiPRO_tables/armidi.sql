@@ -2,6 +2,12 @@
 -- TABLA: armidi - DIRECCION
 -- Descripcion: Direcciones fisicas asociadas a usuarios y solicitudes.
 -- =============================================================================
+CREATE SEQUENCE cz_mi.sqmidi
+MINVALUE 1
+MAXVALUE 999999999999999999999999999
+INCREMENT BY 1
+START WITH 1;
+
 CREATE TABLE cz_mi.armidi (
   id                      NUMBER          NOT NULL,
   usuario                 VARCHAR2(36)    NOT NULL,
@@ -26,7 +32,7 @@ CREATE TABLE cz_mi.armidi (
 );
 
 COMMENT ON TABLE cz_mi.armidi IS 'Direcciones fisicas de los usuarios. Se utiliza para indicar donde se realizara el servicio.';
-COMMENT ON COLUMN cz_mi.armidi.id IS 'Identificador numerico de la direccion (asignado en armidi_br con SQMIDI.NEXTVAL).';
+COMMENT ON COLUMN cz_mi.armidi.id IS 'Identificador numerico de la direccion (asignado en armidi_br con sqmidi.NEXTVAL).';
 COMMENT ON COLUMN cz_mi.armidi.usuario IS 'FK a armius: propietario de la direccion.';
 COMMENT ON COLUMN cz_mi.armidi.nombre IS 'Alias o rotulo de la direccion (ej. Casa, Trabajo).';
 COMMENT ON COLUMN cz_mi.armidi.detalle IS 'Direccion escrita: referencia completa o texto libre.';
@@ -51,14 +57,8 @@ ALTER TABLE cz_mi.armidi
   ADD CONSTRAINT armidi_pk PRIMARY KEY (id) USING INDEX;
 
 ALTER TABLE cz_mi.armidi
-  ADD CONSTRAINT armius_armidi_fk FOREIGN KEY (usuario)
+  ADD CONSTRAINT armidi_armius_fk FOREIGN KEY (usuario)
   REFERENCES cz_mi.armius (id);
-
-CREATE SEQUENCE cz_mi.SQMIDI
-MINVALUE 1
-MAXVALUE 999999999999999999999999999
-INCREMENT BY 1
-START WITH 1;
 
 CREATE OR REPLACE
 TRIGGER cz_mi.armidi_br
@@ -69,7 +69,7 @@ REFERENCING NEW AS NEW
 FOR EACH ROW
 BEGIN
   IF INSERTING THEN
-    :NEW.id               := cz_mi.SQMIDI.NEXTVAL;
+    :NEW.id               := cz_mi.sqmidi.NEXTVAL;
     :NEW.usuario_crea     := USER;
     :NEW.fecha_crea       := SYSDATE;
     :NEW.usuario_modifica := USER;

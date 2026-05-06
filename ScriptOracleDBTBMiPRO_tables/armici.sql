@@ -39,19 +39,19 @@ ALTER TABLE cz_mi.armici
   ADD CONSTRAINT armici_pk PRIMARY KEY (id) USING INDEX;
 
 ALTER TABLE cz_mi.armici
-  ADD CONSTRAINT armici_armiso FOREIGN KEY (solicitud)
+  ADD CONSTRAINT armici_armiso_fk FOREIGN KEY (solicitud)
   REFERENCES cz_mi.armiso (id);
 
 ALTER TABLE cz_mi.armici
-  ADD CONSTRAINT armici_armisos FOREIGN KEY (servicio)
+  ADD CONSTRAINT armici_armisos_fk FOREIGN KEY (servicio)
   REFERENCES cz_mi.armisos (id);
 
 ALTER TABLE cz_mi.armici
-  ADD CONSTRAINT armicie_armici FOREIGN KEY (estado)
+  ADD CONSTRAINT armici_armicie_fk FOREIGN KEY (estado)
   REFERENCES cz_mi.armicie (id);
 
 ALTER TABLE cz_mi.armici
-  ADD CONSTRAINT armitc_armici FOREIGN KEY (tecnico)
+  ADD CONSTRAINT armici_armitc_fk FOREIGN KEY (tecnico)
   REFERENCES cz_mi.armitc (id);
 
 CREATE OR REPLACE
@@ -63,7 +63,7 @@ REFERENCING NEW AS NEW
 FOR EACH ROW
 BEGIN
   IF INSERTING THEN
-    :NEW.id               := cz_mi.SQMICI.NEXTVAL;
+    :NEW.id               := cz_mi.sqmici.NEXTVAL;
     :NEW.usuario_crea     := USER;
     :NEW.fecha_crea       := SYSDATE;
     :NEW.usuario_modifica := USER;

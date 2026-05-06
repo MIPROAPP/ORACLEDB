@@ -2,6 +2,12 @@
 -- TABLA: armino - NOTIFICACION
 -- Descripcion: Notificaciones generadas y enviadas asociadas a solicitudes.
 -- =============================================================================
+CREATE SEQUENCE cz_mi.sqmino
+MINVALUE 1
+MAXVALUE 999999999999999999999999999
+INCREMENT BY 1
+START WITH 1;
+
 CREATE TABLE cz_mi.armino (
   id                      NUMBER          NOT NULL,
   solicitud               VARCHAR2(36)    NOT NULL,
@@ -17,7 +23,7 @@ CREATE TABLE cz_mi.armino (
 );
 
 COMMENT ON TABLE cz_mi.armino IS 'Notificaciones generadas para los usuarios en relacion a sus solicitudes (email, push, etc.).';
-COMMENT ON COLUMN cz_mi.armino.id IS 'Identificador numerico de la notificacion (asignado en armino_br con SQMINO.NEXTVAL).';
+COMMENT ON COLUMN cz_mi.armino.id IS 'Identificador numerico de la notificacion (asignado en armino_br con sqmino.NEXTVAL).';
 COMMENT ON COLUMN cz_mi.armino.solicitud IS 'FK a armiso: solicitud a la que pertenece la notificacion.';
 COMMENT ON COLUMN cz_mi.armino.asunto IS 'Titulo o asunto (ej. de correo o de alerta en pantalla).';
 COMMENT ON COLUMN cz_mi.armino.cuerpo IS 'Contenido completo del mensaje o notificacion (texto plano o enriquecido a convenir).';
@@ -33,14 +39,8 @@ ALTER TABLE cz_mi.armino
   ADD CONSTRAINT armino_pk PRIMARY KEY (id) USING INDEX;
 
 ALTER TABLE cz_mi.armino
-  ADD CONSTRAINT armiso_armino_fk FOREIGN KEY (solicitud)
+  ADD CONSTRAINT armino_armiso_fk FOREIGN KEY (solicitud)
   REFERENCES cz_mi.armiso (id);
-
-CREATE SEQUENCE cz_mi.SQMINO
-MINVALUE 1
-MAXVALUE 999999999999999999999999999
-INCREMENT BY 1
-START WITH 1;
 
 CREATE OR REPLACE
 TRIGGER cz_mi.armino_br
@@ -51,7 +51,7 @@ REFERENCING NEW AS NEW
 FOR EACH ROW
 BEGIN
   IF INSERTING THEN
-    :NEW.id               := cz_mi.SQMINO.NEXTVAL;
+    :NEW.id               := cz_mi.sqmino.NEXTVAL;
     :NEW.usuario_crea     := USER;
     :NEW.fecha_crea       := SYSDATE;
     :NEW.usuario_modifica := USER;

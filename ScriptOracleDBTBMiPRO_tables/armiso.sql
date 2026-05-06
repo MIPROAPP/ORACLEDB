@@ -2,6 +2,12 @@
 -- TABLA: armiso - SOLICITUD
 -- Descripcion: Tabla principal de solicitudes de servicio realizadas por usuarios.
 -- =============================================================================
+CREATE SEQUENCE cz_mi.sqmiiso
+MINVALUE 1
+MAXVALUE 999999999999999999999999999
+INCREMENT BY 1
+START WITH 1;
+
 CREATE TABLE cz_mi.armiso (
   id                      VARCHAR2(36)    NOT NULL,
   usuario                 VARCHAR2(36)    NOT NULL,
@@ -25,7 +31,7 @@ CREATE TABLE cz_mi.armiso (
 );
 
 COMMENT ON TABLE cz_mi.armiso IS 'Tabla principal de solicitudes de servicio. Registra cada pedido realizado por un usuario para uno o varios servicios.';
-COMMENT ON COLUMN cz_mi.armiso.id IS 'Identificador de solicitud: prefijo SOL- y numero generado por SQMIISO (ej. SOL-123).';
+COMMENT ON COLUMN cz_mi.armiso.id IS 'Identificador de solicitud: prefijo SOL- y numero generado por sqmiiso (ej. SOL-123).';
 COMMENT ON COLUMN cz_mi.armiso.usuario IS 'FK a armius: usuario que realiza la solicitud.';
 COMMENT ON COLUMN cz_mi.armiso.direccion IS 'FK a armidi: direccion donde se prestara el servicio.';
 COMMENT ON COLUMN cz_mi.armiso.fecha IS 'Fecha relevante de la solicitud (ej. de pedido o registro segun reglas de negocio).';
@@ -49,26 +55,12 @@ ALTER TABLE cz_mi.armiso
   ADD CONSTRAINT armiso_pk PRIMARY KEY (id) USING INDEX;
 
 ALTER TABLE cz_mi.armiso
-  ADD CONSTRAINT armius_armiso_fk FOREIGN KEY (usuario)
-  REFERENCES cz_mi.armius (id);
-
-ALTER TABLE cz_mi.armiso
-  ADD CONSTRAINT armidi_armiso_fk FOREIGN KEY (direccion)
-  REFERENCES cz_mi.armidi (id);
-
-ALTER TABLE cz_mi.armiso
-  ADD CONSTRAINT armisot_armiso_fk FOREIGN KEY (tipo)
+  ADD CONSTRAINT armiso_armisot_fk FOREIGN KEY (tipo)
   REFERENCES cz_mi.armisot (id);
 
 ALTER TABLE cz_mi.armiso
-  ADD CONSTRAINT armisoe_armiso_fk FOREIGN KEY (estado)
+  ADD CONSTRAINT armiso_armisoe_fk FOREIGN KEY (estado)
   REFERENCES cz_mi.armisoe (id);
-
-CREATE SEQUENCE cz_mi.SQMIISO
-MINVALUE 1
-MAXVALUE 999999999999999999999999999
-INCREMENT BY 1
-START WITH 1;
 
 CREATE OR REPLACE
 TRIGGER cz_mi.armiso_br
@@ -79,7 +71,7 @@ REFERENCING NEW AS NEW
 FOR EACH ROW
 BEGIN
   IF INSERTING THEN
-    :NEW.id               := 'SOL-' || TO_CHAR(cz_mi.SQMIISO.NEXTVAL);
+    :NEW.id               := 'SOL-' || TO_CHAR(cz_mi.sqmiiso.NEXTVAL);
     :NEW.usuario_crea     := USER;
     :NEW.fecha_crea       := SYSDATE;
     :NEW.usuario_modifica := USER;
@@ -90,3 +82,5 @@ BEGIN
   END IF;
 END;
 /
+
+

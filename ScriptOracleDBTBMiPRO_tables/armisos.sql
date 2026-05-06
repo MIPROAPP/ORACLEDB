@@ -2,6 +2,12 @@
 -- TABLA: armisos - SOLICITUD_SERVICIO (satelite de SOLICITUD)
 -- Descripcion: Detalle de servicios incluidos en cada solicitud.
 -- =============================================================================
+CREATE SEQUENCE cz_mi.sqmisos
+MINVALUE 1
+MAXVALUE 999999999999999999999999999
+INCREMENT BY 1
+START WITH 1;
+
 CREATE TABLE cz_mi.armisos (
   id                      NUMBER          NOT NULL,
   no_arti                 VARCHAR2(15)    NOT NULL, --id de servicio
@@ -16,7 +22,7 @@ CREATE TABLE cz_mi.armisos (
 );
 
 COMMENT ON TABLE cz_mi.armisos IS 'Detalle de servicios solicitados dentro de una solicitud. Permite que una solicitud incluya multiples servicios.';
-COMMENT ON COLUMN cz_mi.armisos.id IS 'Identificador numerico de la linea de servicio (asignado en armisos_br con SQMISOS.NEXTVAL).';
+COMMENT ON COLUMN cz_mi.armisos.id IS 'Identificador numerico de la linea de servicio (asignado en armisos_br con sqmisos.NEXTVAL).';
 COMMENT ON COLUMN cz_mi.armisos.solicitud IS 'FK a armiso: solicitud padre.';
 COMMENT ON COLUMN cz_mi.armisos.categoria IS 'Codigo o clave de categoria de servicio';
 COMMENT ON COLUMN cz_mi.armisos.no_arti IS 'Codigo id del servicio.';
@@ -31,14 +37,8 @@ ALTER TABLE cz_mi.armisos
   ADD CONSTRAINT armisos_pk PRIMARY KEY (id) USING INDEX;
 
 ALTER TABLE cz_mi.armisos
-  ADD CONSTRAINT armiso_armisos_fk FOREIGN KEY (solicitud)
+  ADD CONSTRAINT armisos_armiso_fk FOREIGN KEY (solicitud)
   REFERENCES cz_mi.armiso (id);
-
-CREATE SEQUENCE cz_mi.SQMISOS
-MINVALUE 1
-MAXVALUE 999999999999999999999999999
-INCREMENT BY 1
-START WITH 1;
 
 CREATE OR REPLACE
 TRIGGER cz_mi.armisos_br
@@ -49,7 +49,7 @@ REFERENCING NEW AS NEW
 FOR EACH ROW
 BEGIN
   IF INSERTING THEN
-    :NEW.id               := cz_mi.SQMISOS.NEXTVAL;
+    :NEW.id               := cz_mi.sqmisos.NEXTVAL;
     :NEW.usuario_crea     := USER;
     :NEW.fecha_crea       := SYSDATE;
     :NEW.usuario_modifica := USER;

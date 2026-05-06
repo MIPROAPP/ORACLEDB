@@ -1,191 +1,168 @@
 ---
 config:
-  layout: elk
-  theme: redux-dark-color
+  theme: dark
 ---
-
 erDiagram
 
-    usuario {
-        number id
-        varchar correo
-        varchar nombre
-        varchar apellido
-        varchar tipo
-        varchar identificacion
-        varchar activo
-        date fecha_crea
-        date fecha_modifica
-        varchar usuario_crea
-        varchar usuario_modifica
-    }
+%%solicitud
+ARMISO {
+string solicitud
+string cliente
+string direccion
+string tipo
+string estado
+string descripcion
+string factura
+string empresa
+number subtotal
+number descuento
+number impuesto
+number total
+number tecnico
+date inicio
+date fin
+date fecha_crea
+date fecha_modifica
+string usuario_crea
+string usuario_modifica
+}
 
-    telefono_tipo {
-        varchar id
-        varchar tipo
-        date fecha_crea
-        date fecha_modifica
-        varchar usuario_crea
-        varchar usuario_modifica
-    }
+ARMISO||--|| ARMCCL:""
+ARMISO||--|| ARMCCLD:""
+ARMISO ||--|| ARMISOE:""
+ARMISO ||--|{ ARMISOS:""
+ARMISO||--|{ARMIFA:""
+ARMISO||--|{ARMISR:""
+ARMISO||--|{ARMISOT:""
+ARMISO||--||ARMITC:""
 
-    telefono {
-        number id
-        varchar usuario
-        varchar tipo
-        number codigo_pais
-        varchar telefono
-        date fecha_crea
-        date fecha_modifica
-        varchar usuario_crea
-        varchar usuario_modifica
-    }
+%%estado solicitud
+ARMISOE {
+string estado
+string nombre
+date fecha_crea
+date fecha_modifica
+string usuario_crea
+string usuario_modifica
+}
 
-    direccion {
-        number id
-        varchar usuario
-        varchar nombre
-        varchar detalle
-        varchar latitud
-        varchar longitud
-        varchar corregimiento
-        varchar distrito
-        varchar provincia
-        varchar calle
-        varchar piso
-        varchar numero_casa
-        varchar barrio
-        varchar tiene_ascensor
-        varchar es_predeterminada
-        varchar es_edificio
-        date fecha_crea
-        date fecha_modifica
-        varchar usuario_crea
-        varchar usuario_modifica
-    }
+%%tipo solicitud
+ARMISOT {
+string tipo
+string nombre
+date fecha_crea
+date fecha_modifica
+string usuario_crea
+string usuario_modifica
+}
 
-    solicitud_tipo {
-        varchar id
-        varchar nombre
-        date fecha_crea
-        date fecha_modifica
-        varchar usuario_crea
-        varchar usuario_modifica
-    }
+%%facturas de la solicitud
+ARMIFA{
+  string key_docu
+  string solicitud
+  date fecha_crea
+date fecha_modifica
+string usuario_crea
+string usuario_modifica
+}
 
-    solicitud_estado {
-        varchar id
-        varchar sku
-        varchar categoria_id
-        varchar nombre
-        date fecha_crea
-        date fecha_modifica
-        varchar usuario_crea
-        varchar usuario_modifica
-    }
+ARMIFA||--||ARFAFE:""
 
-    solicitud {
-        varchar id
-        varchar usuario
-        varchar direccion
-        date fecha
-        varchar tipo
-        varchar estado
-        varchar descripcion
-        varchar factura
-        varchar empresa
-        number subtotal
-        number descuento
-        number impuesto
-        number total
-        varchar cotizacion_servicio
-        varchar factura_servicio
-        date fecha_crea
-        date fecha_modifica
-        varchar usuario_crea
-        varchar usuario_modifica
-    }
+%%solicitudes relacionadas
+ARMISR{
+  string solicitud
+  string solicitud_ref
+}
 
-    solicitud_servicio {
-        number id
-        varchar no_arti
-        varchar solicitud
-        varchar categoria
-        number precio
-        number cantidad
-        date fecha_crea
-        date fecha_modifica
-        varchar usuario_crea
-        varchar usuario_modifica
-    }
+ARMISR||--||ARMISO:""
 
-    cita_estado {
-        varchar id
-        varchar nombre
-        date fecha_crea
-        date fecha_modifica
-        varchar usuario_crea
-        varchar usuario_modifica
-    }
+%%servicios
+ARMISOS {
+string solicitud
+number linea
+string no_arti
+number precio
+number cantidad
+number subtotal
+number descuento
+number impuesto
+number total
+number tecnico
+date fecha_crea
+date fecha_modifica
+string usuario_crea
+string usuario_modifica
+}
 
-    tecnico {
-        number id
-        number no_prove
-        varchar identificacion
-        varchar tipo_identificacion
-        varchar nombre
-        varchar apellido
-        date fecha_crea
-        date fecha_modifica
-        varchar usuario_crea
-        varchar usuario_modifica
-    }
+ARMISOS||--|| ARINDA:""
+ARMISOS ||--|{ ARMISOSM:""
+ARMISOS ||--|{ ARMISOSA:""
 
-    cita {
-        number id
-        varchar solicitud
-        varchar servicio
-        varchar estado
-        number no_prove
-        varchar identificacion
-        varchar tipo_identificacion
-        date fecha_programada_inicio
-        date fecha_programada_fin
-        date fecha_crea
-        date fecha_modifica
-        varchar usuario_crea
-        varchar usuario_modifica
-    }
+%%imagenes adjuntas
+ARMISOSM {
+string media
+string solicitud
+number linea
+string descipcion
+string url
+date fecha_crea
+date fecha_modifica
+string usuario_crea
+string usuario_modifica
+}
 
-    notificacion {
-        number id
-        varchar solicitud
-        varchar asunto
-        varchar cuerpo
-        date fecha_emision
-        varchar enviado
-        date fecha_envio
-        date fecha_crea
-        date fecha_modifica
-        varchar usuario_crea
-        varchar usuario_modifica
-    }
+%%atributos del servicio
+ARMISOSA{
+string atributo
+string solicitud
+number linea
+string valor
+date fecha_crea
+date fecha_modifica
+string usuario_crea
+string usuario_modifica
+}
 
-    usuario ||--o{ telefono : usuario
-    telefono_tipo ||--o{ telefono : tipo
+ARMISOSA||--|| ARINCA:""
 
-    usuario ||--o{ direccion : usuario
+%%tecnico
+ARMITC {
+number tecnico
+number no_prove
+string identificacion
+string tipo_identificacion
+string nombre
+string apellido
+date fecha_crea
+date fecha_modifica
+string usuario_crea
+string usuario_modifica
+}
 
-    usuario ||--o{ solicitud : usuario
-    direccion ||--o{ solicitud : direccion
-    solicitud_tipo ||--o{ solicitud : tipo
-    solicitud_estado ||--o{ solicitud : estado
+ARMITC ||--|| ARINMP:""
 
-    solicitud ||--o{ solicitud_servicio : solicitud
+%%notificacion
+ARMINO {
+number notificacion
+string titulo
+string mensaje
+string tipo
+date fecha_emision
+date fecha_crea
+date fecha_modifica
+string usuario_crea
+string usuario_modifica
+}
 
-    solicitud ||--o{ cita : solicitud
-    solicitud_servicio ||--o{ cita : servicio
-    cita_estado ||--o{ cita : estado
-    tecnico ||--o{ cita : tecnico
+ARMINO ||--|| ARMINOT:""
 
-    solicitud ||--o{ notificacion : solicitud
+%%tipo notificacion
+ARMINOT{
+string tipo
+string nombre
+date fecha_emision
+date fecha_crea
+date fecha_modifica
+string usuario_crea
+string usuario_modifica
+}

@@ -16,12 +16,10 @@ de la empresa.
 - Nunca agregar STORAGE, TABLESPACE u otras cláusulas físicas.
 - Nunca omitir los campos de auditoría (FECHA_CREA, USUARIO_CREA, FECHA_MODIFICA, USUARIO_MODIFICA).
 - Nunca omitir el trigger de auditoría `_br` en tablas nuevas.
-- Nunca omitir el SYNONYM después de cada objeto. Los GRANT no son obligatorios en el estándar de creación de tablas; aplicar según despliegue.
 
 ## Comportamiento esperado
 
 - Siempre confirmar módulo y owner antes de generar scripts.
-- Siempre incluir script de rollback.
 - Siempre presentar el output como Artifact revisable.
 - Si hay ambigüedad en el esquema, preguntar antes de asumir.
 - Usar el catálogo de módulos del documento de estándares para validar nombres.

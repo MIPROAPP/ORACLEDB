@@ -1,10 +1,10 @@
 -- =============================================================================
 -- TABLA: armifa - SOLICITUD_FACTURA
--- Descripcion: Facturas asociadas a las solicitudes de servicio.
+-- Descripcion: Facturas asociadas a las solicitudes.
 -- =============================================================================
 CREATE TABLE cz_mi.armifa (
   key_docu                VARCHAR2(50)    NOT NULL,
-  solicitud               VARCHAR2(36)    NOT NULL,
+  solicitud               VARCHAR2(14)    NOT NULL,
   fecha_crea              DATE            NOT NULL,
   fecha_modifica          DATE,
   usuario_crea            VARCHAR2(30)    NOT NULL,
@@ -23,8 +23,12 @@ ALTER TABLE cz_mi.armifa
   ADD CONSTRAINT armifa_pk PRIMARY KEY (key_docu) USING INDEX;
 
 ALTER TABLE cz_mi.armifa
-  ADD CONSTRAINT armifa_armiso_fk FOREIGN KEY (solicitud)
+  ADD CONSTRAINT armifa_armiso FOREIGN KEY (solicitud)
   REFERENCES cz_mi.armiso (solicitud);
+
+ALTER TABLE cz_mi.armifa
+  ADD CONSTRAINT armifa_arfafe FOREIGN KEY (key_docu)
+  REFERENCES cz_fa.arfafe (key_docu);
 
 CREATE OR REPLACE
 TRIGGER cz_mi.armifa_br

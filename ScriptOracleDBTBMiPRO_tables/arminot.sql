@@ -3,7 +3,7 @@
 -- Descripcion: Catalogo de tipos de notificacion (ej: Email, SMS, Push).
 -- =============================================================================
 CREATE TABLE cz_mi.arminot (
-  tipo                    VARCHAR2(10)    NOT NULL,
+  tipo                    VARCHAR2(1)    NOT NULL,
   nombre                  VARCHAR2(100)   NOT NULL,
   fecha_crea              DATE            NOT NULL,
   fecha_modifica          DATE,

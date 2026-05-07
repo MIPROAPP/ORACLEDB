@@ -3,9 +3,10 @@
 -- Descripcion: Atributos o caracteristicas adicionales de un servicio en la solicitud.
 -- =============================================================================
 CREATE TABLE cz_mi.armisosa (
-  atributo                VARCHAR2(36)    NOT NULL,
-  solicitud               VARCHAR2(36)    NOT NULL,
-  linea                   NUMBER          NOT NULL,
+  solicitud               VARCHAR2(14)    NOT NULL,
+  linea                   NUMBER(3)       NOT NULL,
+  atributo                VARCHAR2(50)    NOT NULL,
+  no_arti                 VARCHAR2(15)    NOT NULL,
   valor                   VARCHAR2(4000)  NOT NULL,
   fecha_crea              DATE            NOT NULL,
   fecha_modifica          DATE,
@@ -14,8 +15,8 @@ CREATE TABLE cz_mi.armisosa (
 );
 
 COMMENT ON TABLE cz_mi.armisosa IS 'Detalle de atributos dinamicos para cada linea de servicio.';
-COMMENT ON COLUMN cz_mi.armisosa.atributo IS 'Codigo del atributo (referencia a ARINCA).';
-COMMENT ON COLUMN cz_mi.armisosa.solicitud IS 'solicitud padre';
+COMMENT ON COLUMN cz_mi.armisosa.atributo IS 'Codigo del atributo (FK a ARINCA).';
+COMMENT ON COLUMN cz_mi.armisosa.solicitud IS 'FK a armiso: solicitud padre.';
 COMMENT ON COLUMN cz_mi.armisosa.linea IS 'FK a armisos: linea de servicio padre.';
 COMMENT ON COLUMN cz_mi.armisosa.valor IS 'Valor asignado al atributo.';
 COMMENT ON COLUMN cz_mi.armisosa.fecha_crea IS 'Fecha y hora de creacion del registro.';
@@ -24,11 +25,15 @@ COMMENT ON COLUMN cz_mi.armisosa.usuario_crea IS 'Usuario que creo el registro (
 COMMENT ON COLUMN cz_mi.armisosa.usuario_modifica IS 'Usuario de la ultima modificacion (auditoria).';
 
 ALTER TABLE cz_mi.armisosa
-  ADD CONSTRAINT armisosa_pk PRIMARY KEY (atributo) USING INDEX;
+  ADD CONSTRAINT armisosa_pk PRIMARY KEY (solicitud, linea, atributo, no_arti) USING INDEX;
 
 ALTER TABLE cz_mi.armisosa
-  ADD CONSTRAINT armisosa_armisos_fk FOREIGN KEY (linea)
-  REFERENCES cz_mi.armisos (linea);
+  ADD CONSTRAINT armisosa_armisos FOREIGN KEY (solicitud,linea,no_arti)
+  REFERENCES cz_mi.armisos (solicitud,linea,no_arti);
+
+ALTER TABLE cz_mi.armisosa
+  ADD CONSTRAINT armisosa_arinca FOREIGN KEY (atributo,no_arti)
+  REFERENCES cz_in.arinca (atributo,no_arti);
 
 CREATE OR REPLACE
 TRIGGER cz_mi.armisosa_br

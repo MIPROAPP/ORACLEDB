@@ -1,9 +1,9 @@
 -- =============================================================================
--- TABLA: armisoe - SOLICITUD_ESTADO (satelite de SOLICITUD)
+-- TABLA: armisoe - SOLICITUD_ESTADO (catalogo de los estados de solicitud)
 -- Descripcion: Estados posibles de una solicitud.
 -- =============================================================================
 CREATE TABLE cz_mi.armisoe (
-  id                      VARCHAR2(1)     NOT NULL,
+  estado                  VARCHAR2(1)     NOT NULL,
   nombre                  VARCHAR2(100)   NOT NULL,
   fecha_crea              DATE            NOT NULL,
   fecha_modifica          DATE,
@@ -11,16 +11,16 @@ CREATE TABLE cz_mi.armisoe (
   usuario_modifica        VARCHAR2(30)
 );
 
-COMMENT ON TABLE cz_mi.armisoe IS 'Catalogo de estados de solicitud (ej: pendiente, en proceso, completada, cancelada).';
-COMMENT ON COLUMN cz_mi.armisoe.id IS 'Codigo de catalogo (1 caracter). Clave del estado de solicitud.';
-COMMENT ON COLUMN cz_mi.armisoe.nombre IS 'Nombre o descripcion del estado (para pantallas e informes).';
+COMMENT ON TABLE cz_mi.armisoe IS 'Catalogo de estados de solicitud';
+COMMENT ON COLUMN cz_mi.armisoe.estado IS 'Codigo del estado de solicitud.';
+COMMENT ON COLUMN cz_mi.armisoe.nombre IS 'Nombre del estado.';
 COMMENT ON COLUMN cz_mi.armisoe.fecha_crea IS 'Fecha y hora de creacion del registro.';
 COMMENT ON COLUMN cz_mi.armisoe.fecha_modifica IS 'Fecha y hora de la ultima modificacion.';
 COMMENT ON COLUMN cz_mi.armisoe.usuario_crea IS 'Usuario que creo el registro (auditoria).';
 COMMENT ON COLUMN cz_mi.armisoe.usuario_modifica IS 'Usuario de la ultima modificacion (auditoria).';
 
 ALTER TABLE cz_mi.armisoe
-  ADD CONSTRAINT armisoe_pk PRIMARY KEY (id) USING INDEX;
+  ADD CONSTRAINT armisoe_pk PRIMARY KEY (estado) USING INDEX;
 
 
 CREATE OR REPLACE

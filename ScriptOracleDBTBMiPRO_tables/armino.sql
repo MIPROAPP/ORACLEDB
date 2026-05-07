@@ -4,14 +4,14 @@
 -- =============================================================================
 CREATE SEQUENCE cz_mi.sqmino
 MINVALUE 1
-MAXVALUE 999999999999999999999999999
+MAXVALUE 9999999999
 INCREMENT BY 1
 START WITH 1;
 
 CREATE TABLE cz_mi.armino (
   notificacion            NUMBER          NOT NULL,
-  solicitud               VARCHAR2(36)    NOT NULL,
-  titulo                  VARCHAR2(500)   NOT NULL,
+  solicitud               VARCHAR2(14)    NOT NULL,
+  titulo                  VARCHAR2(1000)   NOT NULL,
   mensaje                 VARCHAR2(4000)  NOT NULL,
   tipo                    VARCHAR2(1)     NOT NULL,
   fecha_emision           DATE            NOT NULL,
@@ -37,7 +37,7 @@ ALTER TABLE cz_mi.armino
   ADD CONSTRAINT armino_pk PRIMARY KEY (notificacion) USING INDEX;
 
 ALTER TABLE cz_mi.armino
-  ADD CONSTRAINT armino_arminot_fk FOREIGN KEY (tipo)
+  ADD CONSTRAINT armino_arminot FOREIGN KEY (tipo)
   REFERENCES cz_mi.arminot (tipo);
 
 CREATE OR REPLACE

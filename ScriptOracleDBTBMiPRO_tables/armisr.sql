@@ -1,10 +1,10 @@
 -- =============================================================================
 -- TABLA: armisr - SOLICITUD_RELACIONADA
--- Descripcion: Relaciones entre solicitudes (ej: re-trabajos, seguimientos).
+-- Descripcion: Relaciones entre solicitudes
 -- =============================================================================
 CREATE TABLE cz_mi.armisr (
-  solicitud               VARCHAR2(36)    NOT NULL,
-  solicitud_ref           VARCHAR2(36)    NOT NULL,
+  solicitud               VARCHAR2(14)    NOT NULL,
+  solicitud_ref           VARCHAR2(14)    NOT NULL,
   fecha_crea              DATE            NOT NULL,
   fecha_modifica          DATE,
   usuario_crea            VARCHAR2(30)    NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE cz_mi.armisr (
 
 COMMENT ON TABLE cz_mi.armisr IS 'Registra relaciones de dependencia o referencia entre dos solicitudes.';
 COMMENT ON COLUMN cz_mi.armisr.solicitud IS 'FK a armiso: solicitud origen.';
-COMMENT ON COLUMN cz_mi.armisr.solicitud_ref IS 'FK a armiso: solicitud referenciada.';
+COMMENT ON COLUMN cz_mi.armisr.solicitud_ref IS 'Solicitud referenciada.';
 COMMENT ON COLUMN cz_mi.armisr.fecha_crea IS 'Fecha y hora de creacion del registro.';
 COMMENT ON COLUMN cz_mi.armisr.fecha_modifica IS 'Fecha y hora de la ultima modificacion.';
 COMMENT ON COLUMN cz_mi.armisr.usuario_crea IS 'Usuario que creo el registro (auditoria).';
@@ -23,12 +23,9 @@ ALTER TABLE cz_mi.armisr
   ADD CONSTRAINT armisr_pk PRIMARY KEY (solicitud, solicitud_ref) USING INDEX;
 
 ALTER TABLE cz_mi.armisr
-  ADD CONSTRAINT armisr_armiso_fk FOREIGN KEY (solicitud)
+  ADD CONSTRAINT armisr_armiso FOREIGN KEY (solicitud)
   REFERENCES cz_mi.armiso (solicitud);
 
-ALTER TABLE cz_mi.armisr --verificar esta relacion con armiso.
-  ADD CONSTRAINT armisr_armiso_ref_fk FOREIGN KEY (solicitud_ref)
-  REFERENCES cz_mi.armiso (solicitud);
 
 CREATE OR REPLACE
 TRIGGER cz_mi.armisr_br

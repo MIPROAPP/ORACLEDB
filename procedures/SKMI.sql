@@ -47,6 +47,7 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
     v_no_arti          VARCHAR2(15);
     v_precio           NUMBER;
     v_cant             NUMBER;
+    v_linea            NUMBER;
     v_err              VARCHAR2(4000);
     v_sp_hecho         BOOLEAN := FALSE;
   BEGIN
@@ -181,7 +182,7 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
       jo := json_object_t(ja.get(i));
       v_no_arti := TRIM(jo.get_string('servicio'));
       v_precio := jo.get_number('precio');
-      v_cant   := 1;
+      v_cant   := NVL(jo.get_number('cantidad'), 1);
       v_subtotal := jo.get_number('subtotal');
       IF v_subtotal IS NULL THEN RAISE_APPLICATION_ERROR(-20001, 'subtotal de servicio obligatorio o inválido'); END IF;
 
@@ -194,26 +195,37 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
       v_total := jo.get_number('total');
       IF v_total IS NULL THEN RAISE_APPLICATION_ERROR(-20001, 'total de servicio obligatorio o inválido'); END IF;
 
-      INSERT INTO cz_mi.armisos (
-        solicitud,
-        no_arti,
-        precio,
-        cantidad,
-        subtotal,
-        descuento,
-        impuesto,
-        total
-      )
-      VALUES (
-        v_id_sol,
-        v_no_arti,
-        v_precio,
-        v_cant,
-        v_subtotal,
-        v_descuento,
-        v_impuesto,
-        v_total
-      );
+      -- Obtener o generar linea
+      v_linea := jo.get_number('linea');
+      IF v_linea IS NULL THEN
+        SELECT NVL(MAX(linea), 0) + 1 
+          INTO v_linea 
+          FROM cz_mi.armisos 
+         WHERE solicitud = v_id_sol;
+      END IF;
+
+      MERGE INTO cz_mi.armisos t
+      USING (SELECT v_id_sol   AS solicitud,
+                    v_linea    AS linea,
+                    v_no_arti  AS no_arti,
+                    v_precio   AS precio,
+                    v_cant     AS cantidad,
+                    v_subtotal AS subtotal,
+                    v_descuento AS descuento,
+                    v_impuesto AS impuesto,
+                    v_total    AS total
+               FROM DUAL) s
+      ON (t.solicitud = s.solicitud AND t.linea = s.linea AND t.no_arti = s.no_arti)
+      WHEN MATCHED THEN
+        UPDATE SET t.precio    = s.precio,
+                   t.cantidad  = s.cantidad,
+                   t.subtotal  = s.subtotal,
+                   t.descuento = s.descuento,
+                   t.impuesto  = s.impuesto,
+                   t.total     = s.total
+      WHEN NOT MATCHED THEN
+        INSERT (solicitud, linea, no_arti, precio, cantidad, subtotal, descuento, impuesto, total)
+        VALUES (s.solicitud, s.linea, s.no_arti, s.precio, s.cantidad, s.subtotal, s.descuento, s.impuesto, s.total);
     END LOOP;
 
     v_step := 'OUT';

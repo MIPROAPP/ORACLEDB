@@ -11,6 +11,7 @@ START WITH 1;
 CREATE TABLE cz_mi.armisosm (
   solicitud               VARCHAR2(14)    NOT NULL,
   linea                   NUMBER(3)       NOT NULL,
+  no_arti                 VARCHAR2(15)    NOT NULL,
   media                   NUMBER(10)      NOT NULL,
   descripcion             VARCHAR2(4000),
   url                     VARCHAR2(500)   NOT NULL,
@@ -24,6 +25,7 @@ COMMENT ON TABLE cz_mi.armisosm IS 'Almacena referencias a archivos multimedia a
 COMMENT ON COLUMN cz_mi.armisosm.media IS 'Identificador unico del recurso multimedia.';
 COMMENT ON COLUMN cz_mi.armisosm.solicitud IS 'FK a armiso: solicitud padre.';
 COMMENT ON COLUMN cz_mi.armisosm.linea IS 'FK a armisos: linea de servicio padre.';
+COMMENT ON COLUMN cz_mi.armisosm.no_arti IS 'FK a armisos: codigo de articulo.';
 COMMENT ON COLUMN cz_mi.armisosm.descripcion IS 'Detalle del contenido de la imagen o archivo.';
 COMMENT ON COLUMN cz_mi.armisosm.url IS 'Ruta de acceso o URL del archivo.';
 COMMENT ON COLUMN cz_mi.armisosm.fecha_crea IS 'Fecha y hora de creacion del registro.';
@@ -32,11 +34,11 @@ COMMENT ON COLUMN cz_mi.armisosm.usuario_crea IS 'Usuario que creo el registro (
 COMMENT ON COLUMN cz_mi.armisosm.usuario_modifica IS 'Usuario de la ultima modificacion (auditoria).';
 
 ALTER TABLE cz_mi.armisosm
-  ADD CONSTRAINT armisosm_pk PRIMARY KEY (solicitud,linea,media) USING INDEX;
+  ADD CONSTRAINT armisosm_pk PRIMARY KEY (solicitud,linea,no_arti,media) USING INDEX;
 
 ALTER TABLE cz_mi.armisosm
-  ADD CONSTRAINT armisosm_armisos FOREIGN KEY (solicitud,linea)
-  REFERENCES cz_mi.armisos (solicitud,linea);
+  ADD CONSTRAINT armisosm_armisos FOREIGN KEY (solicitud,linea,no_arti)
+  REFERENCES cz_mi.armisos (solicitud,linea,no_arti);
 
 CREATE OR REPLACE
 TRIGGER cz_mi.armisosm_br

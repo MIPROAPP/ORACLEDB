@@ -1,30 +1,41 @@
 {
-  "id": "123",
-  "usuario": "usr-88234",
+  "solicitud": "SOL-140",
+  "cliente": "usr-88234",
   "direccion": "dir-55421",
-  "fecha": "2026-04-22T16:45:00Z",
+  "tipo": "1",
+  "estado": "1",
   "descripcion": "Mantenimiento preventivo de aire acondicionado",
-  "destino": "Residencial Los Olivos, Casa 4B",
+  "factura": "F-9988",
   "empresa": "Servicios Tech S.A.",
-  "factura": "asdasd",
-  "impuesto": 0,
-  "descuento": 0,
   "subtotal": 85.0,
+  "descuento": 0.0,
+  "impuesto": 10.2,
   "total": 95.2,
-  "cotizacion": "COT-2026-001",
-  "cotizacion_pagada": true,
-  "cotizacion_forma_pago": "Tarjeta de Crédito",
-  "cotizacion_factura": "dsad",
+  "tecnico": null,
+  "inicio": "2026-05-15T08:00:00Z",
+  "fin": "2026-05-15T12:00:00Z",
   "servicios": [
     {
-      "servicio": "srv-101",
-      "categoria": "cat-101",
-      "precio": 45.0
+      "linea": 1,
+      "no_arti": "srv-101",
+      "precio": 45.0,
+      "cantidad": 1,
+      "subtotal": 45.0,
+      "descuento": 0.0,
+      "impuesto": 5.4,
+      "total": 50.4,
+      "tecnico": null
     },
     {
-      "servicio": "srv-105",
-      "categoria": "cat-102",
-      "precio": 40.0
+      "linea": 2,
+      "no_arti": "srv-105",
+      "precio": 40.0,
+      "cantidad": 1,
+      "subtotal": 40.0,
+      "descuento": 0.0,
+      "impuesto": 4.8,
+      "total": 44.8,
+      "tecnico": null
     }
   ]
 }

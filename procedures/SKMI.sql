@@ -2,26 +2,6 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
 
 
   ------------------------------------------------------------------------------
-  FUNCTION NORMALIZAR_ID_SOLICITUD(P_ID IN VARCHAR2) RETURN VARCHAR2 IS
-    v VARCHAR2(4000);
-  BEGIN
-    IF P_ID IS NULL THEN
-      RETURN NULL;
-    END IF;
-    v := TRIM(P_ID);
-    IF v IS NULL OR LENGTH(v) = 0 OR LOWER(v) IN ('null', 'undefined') THEN
-      RETURN NULL;
-    END IF;
-    IF INSTR(v, 'SOL-') = 1 THEN
-      RETURN v;
-    END IF;
-    IF REGEXP_LIKE(v, '^[0-9]+$') THEN
-      RETURN 'SOL-' || v;
-    END IF;
-    RETURN v;
-  END NORMALIZAR_ID_SOLICITUD;
-
-  ------------------------------------------------------------------------------
   PROCEDURE SOLICITUD(P_IN    IN     CLOB,
                       P_OUT      OUT CLOB,
                       P_ERROR IN OUT VARCHAR2) IS
@@ -29,7 +9,6 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
     ji                 json_object_t;
     ja                 json_array_t;
     jo                 json_object_t;
-    v_id_json          VARCHAR2(4000);
     v_id_sol           VARCHAR2(40);
     v_nuevo            BOOLEAN;
     v_cliente          VARCHAR2(36);
@@ -43,6 +22,9 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
     v_impuesto         NUMBER := 0;
     v_tipo             VARCHAR2(36);
     v_estado           VARCHAR2(36);
+    v_tecnico          NUMBER;
+    v_inicio           DATE;
+    v_fin              DATE;
     n                  PLS_INTEGER;
     v_no_arti          VARCHAR2(15);
     v_precio           NUMBER;
@@ -56,8 +38,7 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
     ji      := json_object_t(P_IN);
 
     v_step := 'PARSE-ID';
-    v_id_json := ji.get_string('id');
-    v_id_sol := NORMALIZAR_ID_SOLICITUD(v_id_json);
+    v_id_sol := ji.get_string('solicitud');
     v_nuevo  := (v_id_sol IS NULL);
 
     v_step := 'PARSE-CLIENTE-DIR';
@@ -92,11 +73,19 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
 
     v_factura_cab := ji.get_string('factura');
 
-    v_tipo := TRIM(ji.get_string('tipo_solicitud'));
-    IF v_tipo IS NULL OR LENGTH(v_tipo) = 0 THEN RAISE_APPLICATION_ERROR(-20001, 'tipo_solicitud obligatorio o inválido'); END IF;
+    v_tipo := TRIM(ji.get_string('tipo'));
+    IF v_tipo IS NULL OR LENGTH(v_tipo) = 0 THEN RAISE_APPLICATION_ERROR(-20001, 'tipo obligatorio o inválido'); END IF;
 
-    v_estado := TRIM(ji.get_string('estado_solicitud'));
-    IF v_estado IS NULL OR LENGTH(v_estado) = 0 THEN RAISE_APPLICATION_ERROR(-20001, 'estado_solicitud obligatorio o inválido'); END IF;
+    v_estado := TRIM(ji.get_string('estado'));
+    IF v_estado IS NULL OR LENGTH(v_estado) = 0 THEN RAISE_APPLICATION_ERROR(-20001, 'estado obligatorio o inválido'); END IF;
+
+    v_tecnico := ji.get_number('tecnico');
+    IF ji.has('inicio') AND ji.get_string('inicio') IS NOT NULL THEN
+       v_inicio := CAST(ji.get_timestamp('inicio') AS DATE);
+    END IF;
+    IF ji.has('fin') AND ji.get_string('fin') IS NOT NULL THEN
+       v_fin := CAST(ji.get_timestamp('fin') AS DATE);
+    END IF;
 
     -- Validación de servicios (obligatorio al menos uno)
     IF NOT ji.has('servicios') THEN
@@ -127,7 +116,10 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
         subtotal,
         descuento,
         impuesto,
-        total
+        total,
+        tecnico,
+        inicio,
+        fin
       )
       VALUES (
         v_cliente,
@@ -140,7 +132,10 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
         v_subtotal,
         v_descuento,
         v_impuesto,
-        v_total
+        v_total,
+        v_tecnico,
+        v_inicio,
+        v_fin
       )
       RETURNING solicitud INTO v_id_sol;
     ELSE
@@ -168,7 +163,10 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
              s.subtotal            = v_subtotal,
              s.descuento           = v_descuento,
              s.impuesto            = v_impuesto,
-             s.total               = v_total
+             s.total               = v_total,
+             s.tecnico             = v_tecnico,
+             s.inicio              = v_inicio,
+             s.fin                 = v_fin
        WHERE s.solicitud = v_id_sol;
 
       IF SQL%ROWCOUNT = 0 THEN
@@ -180,7 +178,7 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
 
     FOR i IN 0 .. n LOOP
       jo := json_object_t(ja.get(i));
-      v_no_arti := TRIM(jo.get_string('servicio'));
+      v_no_arti := TRIM(jo.get_string('no_arti'));
       v_precio := jo.get_number('precio');
       v_cant   := NVL(jo.get_number('cantidad'), 1);
       v_subtotal := jo.get_number('subtotal');
@@ -195,7 +193,6 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
       v_total := jo.get_number('total');
       IF v_total IS NULL THEN RAISE_APPLICATION_ERROR(-20001, 'total de servicio obligatorio o inválido'); END IF;
 
-      -- Obtener o generar linea
       v_linea := jo.get_number('linea');
       IF v_linea IS NULL THEN
         SELECT NVL(MAX(linea), 0) + 1 
@@ -213,7 +210,8 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
                     v_subtotal AS subtotal,
                     v_descuento AS descuento,
                     v_impuesto AS impuesto,
-                    v_total    AS total
+                    v_total    AS total,
+                    jo.get_number('tecnico') AS tecnico
                FROM DUAL) s
       ON (t.solicitud = s.solicitud AND t.linea = s.linea AND t.no_arti = s.no_arti)
       WHEN MATCHED THEN
@@ -222,10 +220,11 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
                    t.subtotal  = s.subtotal,
                    t.descuento = s.descuento,
                    t.impuesto  = s.impuesto,
-                   t.total     = s.total
+                   t.total     = s.total,
+                   t.tecnico   = s.tecnico
       WHEN NOT MATCHED THEN
-        INSERT (solicitud, linea, no_arti, precio, cantidad, subtotal, descuento, impuesto, total)
-        VALUES (s.solicitud, s.linea, s.no_arti, s.precio, s.cantidad, s.subtotal, s.descuento, s.impuesto, s.total);
+        INSERT (solicitud, linea, no_arti, precio, cantidad, subtotal, descuento, impuesto, total, tecnico)
+        VALUES (s.solicitud, s.linea, s.no_arti, s.precio, s.cantidad, s.subtotal, s.descuento, s.impuesto, s.total, s.tecnico);
     END LOOP;
 
     v_step := 'OUT';
@@ -271,7 +270,7 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
     ji      := json_object_t(P_IN);
 
     v_step := 'PARSE-SOLICITUD';
-    v_id_sol := NORMALIZAR_ID_SOLICITUD(ji.get_string('solicitud'));
+    v_id_sol := ji.get_string('solicitud');
     IF v_id_sol IS NULL THEN RAISE_APPLICATION_ERROR(-20001, 'solicitud obligatoria o invalida'); END IF;
 
     v_step := 'SEL-SOLICITUD';
@@ -311,7 +310,7 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
              RETURNING CLOB)
       INTO P_OUT
       FROM cz_mi.armiso s
-      LEFT JOIN cz_mi.armisot tt ON tt.id = s.tipo
+      LEFT JOIN cz_mi.armisot tt ON tt.tipo = s.tipo
      WHERE s.solicitud = v_id_sol;
 
   EXCEPTION
@@ -348,7 +347,7 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
                'tipo_solicitud' VALUE (
                  SELECT COALESCE(
                           JSON_ARRAYAGG(
-                            JSON_OBJECT('id' VALUE t.id, 'nombre' VALUE t.nombre)
+                            JSON_OBJECT('id' VALUE t.tipo, 'nombre' VALUE t.nombre)
                             ORDER BY t.id
                             RETURNING CLOB),
                           TO_CLOB('[]'))
@@ -357,7 +356,7 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
                'estado_solicitud' VALUE (
                  SELECT COALESCE(
                           JSON_ARRAYAGG(
-                            JSON_OBJECT('id' VALUE e.id, 'nombre' VALUE e.nombre)
+                            JSON_OBJECT('id' VALUE e.estado, 'nombre' VALUE e.nombre)
                             ORDER BY e.id
                             RETURNING CLOB),
                           TO_CLOB('[]'))

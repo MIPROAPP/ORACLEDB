@@ -30,6 +30,7 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
     v_precio           NUMBER;
     v_cant             NUMBER;
     v_linea            NUMBER;
+    v_tecnico_lin      NUMBER;
     v_err              VARCHAR2(4000);
     v_sp_hecho         BOOLEAN := FALSE;
   BEGIN
@@ -200,6 +201,8 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
          WHERE solicitud = v_id_sol;
       END IF;
 
+      v_tecnico_lin := jo.get_number('tecnico');
+
       MERGE INTO cz_mi.armisos t
       USING (SELECT v_id_sol   AS solicitud,
                     v_linea    AS linea,
@@ -210,7 +213,7 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
                     v_descuento AS descuento,
                     v_impuesto AS impuesto,
                     v_total    AS total,
-                    jo.get_number('tecnico') AS tecnico
+                    v_tecnico_lin AS tecnico
                FROM DUAL) s
       ON (t.solicitud = s.solicitud AND t.linea = s.linea AND t.no_arti = s.no_arti)
       WHEN MATCHED THEN

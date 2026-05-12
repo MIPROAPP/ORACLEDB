@@ -4,8 +4,8 @@
 -- Auditoria (fecha_crea, usuario_crea, etc.) la completa el trigger armisot_br.
 -- =============================================================================
 
-INSERT INTO cz_mi.armisot (id, nombre) VALUES ('A', 'Inspección');
-INSERT INTO cz_mi.armisot (id, nombre) VALUES ('B', 'Instalación');
+INSERT INTO cz_mi.armisot (tipo, nombre) VALUES ('A', 'Inspección');
+INSERT INTO cz_mi.armisot (tipo, nombre) VALUES ('B', 'Instalación');
 
 COMMIT;
 
@@ -14,6 +14,6 @@ COMMIT;
 -- -----------------------------------------------------------------------------
 /*
 DELETE FROM cz_mi.armisot
- WHERE id IN ('A','B');
+ WHERE tipo IN ('A','B');
 COMMIT;
 */

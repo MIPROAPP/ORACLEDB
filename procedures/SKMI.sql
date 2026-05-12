@@ -2,9 +2,9 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
 
 
   ------------------------------------------------------------------------------
-  PROCEDURE SOLICITUD(P_IN    IN     CLOB,
-                      P_OUT      OUT CLOB,
-                      P_ERROR IN OUT VARCHAR2) IS
+  PROCEDURE SOLICITUD( P_IN    IN     CLOB,
+                       P_OUT      OUT CLOB,
+                       P_ERROR IN OUT VARCHAR2) IS
     v_step             VARCHAR2(200) := 'INICIO';
     ji                 json_object_t;
     ja                 json_array_t;
@@ -33,15 +33,15 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
     v_err              VARCHAR2(4000);
     v_sp_hecho         BOOLEAN := FALSE;
   BEGIN
-    P_ERROR := NULL;
-    v_step  := 'JSON';
-    ji      := json_object_t(P_IN);
+    P_ERROR   := NULL;
+    v_step    := 'JSON';
+    ji        := json_object_t(P_IN);
 
-    v_step := 'PARSE-ID';
-    v_id_sol := ji.get_string('solicitud');
-    v_nuevo  := (v_id_sol IS NULL);
+    v_step    := 'PARSE-ID';
+    v_id_sol  := ji.get_string('solicitud');
+    v_nuevo   := (v_id_sol IS NULL);
 
-    v_step := 'PARSE-CLIENTE-DIR';
+    v_step    := 'PARSE-CLIENTE-DIR';
     v_cliente := ji.get_string('cliente');
     IF v_cliente IS NULL THEN
       RAISE_APPLICATION_ERROR(-20001, 'cliente obligatorio e inválido');
@@ -87,7 +87,6 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
        v_fin := CAST(ji.get_timestamp('fin') AS DATE);
     END IF;
 
-    -- Validación de servicios (obligatorio al menos uno)
     IF NOT ji.has('servicios') THEN
        RAISE_APPLICATION_ERROR(-20001, 'El campo servicios es obligatorio');
     END IF;
@@ -103,7 +102,7 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
     v_sp_hecho := TRUE;
 
     IF v_nuevo THEN
-      v_step := 'INS-ARMISO';
+       v_step := 'INS-ARMISO';
 
       INSERT INTO cz_mi.armiso (
         cliente,
@@ -347,8 +346,8 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
                'tipo_solicitud' VALUE (
                  SELECT COALESCE(
                           JSON_ARRAYAGG(
-                            JSON_OBJECT('id' VALUE t.tipo, 'nombre' VALUE t.nombre)
-                            ORDER BY t.id
+                            JSON_OBJECT('tipo' VALUE t.tipo, 'nombre' VALUE t.nombre)
+                            ORDER BY t.tipo
                             RETURNING CLOB),
                           TO_CLOB('[]'))
                    FROM cz_mi.armisot t
@@ -356,12 +355,27 @@ CREATE OR REPLACE PACKAGE BODY cz_mi.SKMI AS
                'estado_solicitud' VALUE (
                  SELECT COALESCE(
                           JSON_ARRAYAGG(
-                            JSON_OBJECT('id' VALUE e.estado, 'nombre' VALUE e.nombre)
-                            ORDER BY e.id
+                            JSON_OBJECT('estado' VALUE e.estado, 'nombre' VALUE e.nombre)
+                            ORDER BY e.estado
                             RETURNING CLOB),
                           TO_CLOB('[]'))
                    FROM cz_mi.armisoe e
-               )
+               ),
+                'tecnicos' VALUE (
+                  SELECT COALESCE(
+                           JSON_ARRAYAGG(
+                             JSON_OBJECT(
+                               'tecnico'             VALUE tc.tecnico,
+                               'no_prove'            VALUE tc.no_prove,
+                               'identificacion'      VALUE tc.identificacion,
+                               'tipo_identificacion' VALUE tc.tipo_identificacion,
+                               'nombre'              VALUE tc.nombre
+                             )
+                             ORDER BY tc.nombre
+                             RETURNING CLOB),
+                           TO_CLOB('[]'))
+                    FROM cz_mi.armitc tc
+                )
              ),
              'error' VALUE ''
              RETURNING CLOB)

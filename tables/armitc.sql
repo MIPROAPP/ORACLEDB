@@ -41,6 +41,8 @@ ALTER TABLE cz_mi.armitc
   ADD CONSTRAINT armitc_arinmp FOREIGN KEY (no_prove)
   REFERENCES cz_in.arinmp (no_prove);
 
+CREATE INDEX cz_mi.armitc_arinmp_fk ON cz_mi.armitc (no_prove);
+
 CREATE OR REPLACE
 TRIGGER cz_mi.armitc_br
 BEFORE INSERT OR UPDATE

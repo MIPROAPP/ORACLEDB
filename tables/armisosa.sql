@@ -35,6 +35,9 @@ ALTER TABLE cz_mi.armisosa
   ADD CONSTRAINT armisosa_arinca FOREIGN KEY (atributo,no_arti)
   REFERENCES cz_in.arinca (atributo,no_arti);
 
+CREATE INDEX cz_mi.armisosa_armisos_fk ON cz_mi.armisosa (solicitud, linea, no_arti);
+CREATE INDEX cz_mi.armisosa_arinca_fk ON cz_mi.armisosa (atributo, no_arti);
+
 CREATE OR REPLACE
 TRIGGER cz_mi.armisosa_br
 BEFORE INSERT OR UPDATE

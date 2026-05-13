@@ -47,6 +47,9 @@ ALTER TABLE cz_mi.armisos
   ADD CONSTRAINT armisos_arinda FOREIGN KEY (no_arti)
   REFERENCES cz_in.arinda (no_arti);
 
+CREATE INDEX cz_mi.armisos_armiso_fk ON cz_mi.armisos (solicitud);
+CREATE INDEX cz_mi.armisos_arinda_fk ON cz_mi.armisos (no_arti);
+
 CREATE OR REPLACE
 TRIGGER cz_mi.armisos_br
 BEFORE INSERT OR UPDATE

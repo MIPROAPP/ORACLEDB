@@ -30,6 +30,9 @@ ALTER TABLE cz_mi.armifa
   ADD CONSTRAINT armifa_arfafe FOREIGN KEY (key_docu)
   REFERENCES cz_fa.arfafe (key_docu);
 
+CREATE INDEX cz_mi.armifa_armiso_fk ON cz_mi.armifa (solicitud);
+CREATE INDEX cz_mi.armifa_arfafe_fk ON cz_mi.armifa (key_docu);
+
 CREATE OR REPLACE
 TRIGGER cz_mi.armifa_br
 BEFORE INSERT OR UPDATE

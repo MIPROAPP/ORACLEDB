@@ -40,6 +40,8 @@ ALTER TABLE cz_mi.armino
   ADD CONSTRAINT armino_arminot FOREIGN KEY (tipo)
   REFERENCES cz_mi.arminot (tipo);
 
+CREATE INDEX cz_mi.armino_arminot_fk ON cz_mi.armino (tipo);
+
 CREATE OR REPLACE
 TRIGGER cz_mi.armino_br
 BEFORE INSERT OR UPDATE

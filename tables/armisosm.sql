@@ -40,6 +40,8 @@ ALTER TABLE cz_mi.armisosm
   ADD CONSTRAINT armisosm_armisos FOREIGN KEY (solicitud,linea,no_arti)
   REFERENCES cz_mi.armisos (solicitud,linea,no_arti);
 
+CREATE INDEX cz_mi.armisosm_armisos_fk ON cz_mi.armisosm (solicitud, linea, no_arti);
+
 CREATE OR REPLACE
 TRIGGER cz_mi.armisosm_br
 BEFORE INSERT OR UPDATE

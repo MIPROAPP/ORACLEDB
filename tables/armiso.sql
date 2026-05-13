@@ -66,6 +66,10 @@ ALTER TABLE cz_mi.armiso
   ADD CONSTRAINT armiso_armitc FOREIGN KEY (tecnico)
   REFERENCES cz_mi.armitc (tecnico);  
 
+CREATE INDEX cz_mi.armiso_armisot_fk ON cz_mi.armiso (tipo);
+CREATE INDEX cz_mi.armiso_armisoe_fk ON cz_mi.armiso (estado);
+CREATE INDEX cz_mi.armiso_armitc_fk ON cz_mi.armiso (tecnico);
+
 CREATE OR REPLACE
 TRIGGER cz_mi.armiso_br
 BEFORE INSERT OR UPDATE

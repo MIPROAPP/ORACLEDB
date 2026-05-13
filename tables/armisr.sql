@@ -26,6 +26,8 @@ ALTER TABLE cz_mi.armisr
   ADD CONSTRAINT armisr_armiso FOREIGN KEY (solicitud)
   REFERENCES cz_mi.armiso (solicitud);
 
+CREATE INDEX cz_mi.armisr_armiso_fk ON cz_mi.armisr (solicitud);
+
 
 CREATE OR REPLACE
 TRIGGER cz_mi.armisr_br
